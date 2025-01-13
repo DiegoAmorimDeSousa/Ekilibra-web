@@ -2,7 +2,8 @@ import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import clsx from 'clsx';
+import styled from 'styled-components';
+import EkilibraLogo from '../assets/logo.png';
 
 const loginSchema = z.object({
   email: z.string().email('E-mail inválido'),
@@ -10,6 +11,112 @@ const loginSchema = z.object({
 });
 
 type LoginFormInputs = z.infer<typeof loginSchema>;
+
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100vh;
+  border-radius: 30px;
+`;
+
+const Logo = styled.img`
+  width: 200px;
+  height: 120px;
+  object-fit: contain;
+`;
+
+const Form = styled.form`
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: white;
+  border-radius: 10px;
+  width: 300px;  /* Definindo uma largura fixa */
+  padding: 24px;  /* Espaçamento interno para o formulário */
+`;
+
+const Title = styled.h1`
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 16px;
+  background: white;
+  padding: 24px 10px;
+  border-bottom: 3px solid #f5f5f5;
+  border-radius: 10px 10px 0 0;
+  font-family: "Roboto Mono", serif;
+  font-size: 25px;
+`;
+
+const InputGroup = styled.div`
+  margin-bottom: 16px;
+  background: white;
+  padding: 0 24px 0 24px;
+  font-family: "Roboto", serif;
+  letter-spacing: 1.5px;
+`;
+
+const InputButtons = styled.div`
+  font-family: "Roboto", serif;
+  background: white;
+  border-radius: 0px 0px 10px 10px;
+  display: flex;
+  justify-content: space-between;
+
+  .first-button {
+    background: white;
+    border: solid 1px #f4c752;
+
+    &:hover {
+      background-color: #fce8bb;
+    }
+  }
+`;
+
+const Label = styled.label`
+  display: block;
+  font-size: 0.875rem;
+  font-weight: medium;
+  background: white;
+`;
+
+const Input = styled.input<{ hasError?: boolean }>`
+  background: white;
+  margin-top: 8px;
+  width: 100%;
+  padding: 8px;
+  outline: none;
+  border-radius: 10px;
+  border: 1px solid ${(props) => (props.hasError ? '#f87171' : '#d1d5db')};
+  transition: border-color 0.3s;
+  font-family: "Roboto", serif;
+
+  &:focus {
+    border-color: #3b82f6;
+  }
+`;
+
+const ErrorMessage = styled.p`
+  color: #f87171;
+  font-size: 0.875rem;
+  margin-top: 4px;
+`;
+
+const SubmitButton = styled.button`
+  padding: 12px;
+  background-color: #f4c752;
+  color: black;
+  font-weight: bold;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 24px;
+
+  &:hover {
+    background-color: #fad067;
+  }
+`;
 
 const LoginPage: React.FC = () => {
   const {
@@ -25,56 +132,38 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="p-6 bg-white shadow-md rounded-md w-80"
-      >
-        <h1 className="text-2xl font-bold text-center mb-4">Login</h1>
-        <div className="mb-4">
-          <label htmlFor="email" className="block text-sm font-medium">
-            Email
-          </label>
-          <input
+    <Container>
+      <Logo src={EkilibraLogo} alt="logo ekilibra"/>
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <Title>Login</Title>
+        <InputGroup>
+          <Label htmlFor="email">E-mail</Label>
+          <Input
             id="email"
+            placeholder="email@login.com"
             type="email"
-            className={clsx(
-              'mt-1 w-full border p-2 rounded',
-              errors.email ? 'border-red-500' : 'border-gray-300',
-            )}
+            hasError={!!errors.email}
             {...register('email')}
           />
-          {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-          )}
-        </div>
-        <div className="mb-4">
-          <label htmlFor="password" className="block text-sm font-medium">
-            Senha
-          </label>
-          <input
+          {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
+        </InputGroup>
+        <InputGroup>
+          <Label htmlFor="password">Senha</Label>
+          <Input
             id="password"
             type="password"
-            className={clsx(
-              'mt-1 w-full border p-2 rounded',
-              errors.password ? 'border-red-500' : 'border-gray-300',
-            )}
+            placeholder="*********"
+            hasError={!!errors.password}
             {...register('password')}
           />
-          {errors.password && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.password.message}
-            </p>
-          )}
-        </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-        >
-          Entrar
-        </button>
-      </form>
-    </div>
+          {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
+        </InputGroup>
+        <InputButtons>
+          <SubmitButton type="submit" className="first-button">Criar conta</SubmitButton>
+          <SubmitButton type="submit">Entrar</SubmitButton>
+        </InputButtons>
+      </Form>
+    </Container>
   );
 };
 
