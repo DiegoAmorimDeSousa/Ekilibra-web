@@ -4,6 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import styled from 'styled-components';
 import EkilibraLogo from '../assets/logo.png';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
 
 const loginSchema = z.object({
   email: z.string().email('E-mail inválido'),
@@ -158,6 +160,16 @@ const LoginPage: React.FC = () => {
           />
           {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
         </InputGroup>
+        <GoogleOAuthProvider clientId="726269650501-m6onmkh77kl11ojt2q94519t1107s7ku.apps.googleusercontent.com">
+          <GoogleLogin
+            onSuccess={credentialResponse => {
+              console.log(credentialResponse.credential);
+            }}
+            onError={() => {
+              console.log('Login Failed');
+            }}
+          />
+        </GoogleOAuthProvider>
         <InputButtons>
           <SubmitButton type="submit" className="first-button">Criar conta</SubmitButton>
           <SubmitButton type="submit">Entrar</SubmitButton>
