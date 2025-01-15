@@ -25,7 +25,7 @@ const Container = styled.div`
 
 const Logo = styled.img`
   width: 200px;
-  height: 120px;
+  margin-bottom: 15px;
   object-fit: contain;
 `;
 
