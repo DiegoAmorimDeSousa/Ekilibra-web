@@ -107,6 +107,7 @@ const ErrorMessage = styled.p`
 
 const GoogleProvider = styled.div`
   width: 100%;
+  background: white;
 `;
 
 const SubmitButton = styled.button`
