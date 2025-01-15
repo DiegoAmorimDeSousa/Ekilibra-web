@@ -33,8 +33,9 @@ const Form = styled.form`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   background: white;
   border-radius: 10px;
-  width: 300px;  /* Definindo uma largura fixa */
-  padding: 24px;  /* Espaçamento interno para o formulário */
+  max-width: 300px;
+  width: 70%;
+  padding: 24px;  
 `;
 
 const Title = styled.h1`
@@ -53,7 +54,7 @@ const Title = styled.h1`
 const InputGroup = styled.div`
   margin-bottom: 16px;
   background: white;
-  padding: 0 24px 0 24px;
+  padding: 0 17px 0 0px;
   font-family: "Roboto", serif;
   letter-spacing: 1.5px;
 `;
@@ -102,6 +103,10 @@ const ErrorMessage = styled.p`
   color: #f87171;
   font-size: 0.875rem;
   margin-top: 4px;
+`;
+
+const GoogleProvider = styled.div`
+  width: 100%;
 `;
 
 const SubmitButton = styled.button`
@@ -160,16 +165,18 @@ const LoginPage: React.FC = () => {
           />
           {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
         </InputGroup>
-        <GoogleOAuthProvider clientId="726269650501-m6onmkh77kl11ojt2q94519t1107s7ku.apps.googleusercontent.com">
-          <GoogleLogin
-            onSuccess={credentialResponse => {
-              console.log(credentialResponse.credential);
-            }}
-            onError={() => {
-              console.log('Login Failed');
-            }}
-          />
-        </GoogleOAuthProvider>
+        <GoogleProvider>
+          <GoogleOAuthProvider clientId="726269650501-m6onmkh77kl11ojt2q94519t1107s7ku.apps.googleusercontent.com">
+            <GoogleLogin
+              onSuccess={credentialResponse => {
+                console.log(credentialResponse.credential);
+              }}
+              onError={() => {
+                console.log('Login Failed');
+              }}
+            />
+          </GoogleOAuthProvider>
+        </GoogleProvider>
         <InputButtons>
           <SubmitButton type="submit" className="first-button">Criar conta</SubmitButton>
           <SubmitButton type="submit">Entrar</SubmitButton>
