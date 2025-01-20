@@ -8,12 +8,22 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate } from "react-router-dom";
 
-const loginSchema = z.object({
+const signupSchema = z.object({
   email: z.string().email('E-mail inválido'),
   password: z.string().min(6, 'A senha precisa ter no mínimo 6 caracteres'),
+  nome: z.string().min(1, 'Preenche o seu nome corretamente'),
+  confirmPassword: z.string()
+    .min(6, 'A confirmação de senha precisa ter no mínimo 6 caracteres')
+    .refine((val, ctx) => val === ctx.parent.password, {
+      message: 'As senhas não coincidem',
+    }),
+  telefone: z.string()
+    .min(10, 'O telefone deve ter no mínimo 10 dígitos')
+    .max(15, 'O telefone deve ter no máximo 15 dígitos')
+    .regex(/^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/, 'Número de telefone inválido'),
 });
 
-type LoginFormInputs = z.infer<typeof loginSchema>;
+type SignupFormInputs = z.infer<typeof signupSchema>;
 
 const Container = styled.div`
   display: flex;
@@ -127,18 +137,18 @@ const SubmitButton = styled.button`
   }
 `;
 
-const LoginPage: React.FC = () => {
+const SignupPage: React.FC = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormInputs>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<SignupFormInputs>({
+    resolver: zodResolver(signupSchema),
   });
 
   const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<LoginFormInputs> = data => {
+  const onSubmit: SubmitHandler<SignupFormInputs> = data => {
     console.log(data);
   };
 
@@ -146,7 +156,29 @@ const LoginPage: React.FC = () => {
     <Container>
       <Logo src={EkilibraLogo} alt="logo ekilibra"/>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <Title>Login</Title>
+        <Title>Cadastro</Title>
+        <InputGroup>
+          <Label htmlFor="nome">Nome</Label>
+          <Input
+            id="nome"
+            placeholder="Fulano da Silva"
+            type="text"
+            hasError={!!errors.nome}
+            {...register('nome')}
+          />
+          {errors.nome && <ErrorMessage>{errors.nome.message}</ErrorMessage>}
+        </InputGroup>
+        <InputGroup>
+          <Label htmlFor="telefone">Telefone</Label>
+          <Input
+            id="telefone"
+            placeholder="(00) 0 0000-0000"
+            type="text"
+            hasError={!!errors.telefone}
+            {...register('telefone')}
+          />
+          {errors.telefone && <ErrorMessage>{errors.telefone.message}</ErrorMessage>}
+        </InputGroup>
         <InputGroup>
           <Label htmlFor="email">E-mail</Label>
           <Input
@@ -169,6 +201,19 @@ const LoginPage: React.FC = () => {
           />
           {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
         </InputGroup>
+        <InputGroup>
+          <Label htmlFor="confirmPassword">Confirmar Senha</Label>
+          <Input
+            id="confirmPassword"
+            type="password"
+            placeholder="*********"
+            hasError={!!errors.confirmPassword}
+            {...register('confirmPassword')}
+          />
+          {errors.confirmPassword && (
+            <ErrorMessage>{(errors.confirmPassword as { message: string }).message}</ErrorMessage>
+          )}
+        </InputGroup>
         <GoogleProvider>
           <GoogleOAuthProvider clientId="726269650501-m6onmkh77kl11ojt2q94519t1107s7ku.apps.googleusercontent.com">
             <GoogleLogin
@@ -182,12 +227,12 @@ const LoginPage: React.FC = () => {
           </GoogleOAuthProvider>
         </GoogleProvider>
         <InputButtons>
-          <SubmitButton type="submit" onClick={() => navigate("/signup")} className="first-button">Criar conta</SubmitButton>
-          <SubmitButton type="submit">Entrar</SubmitButton>
+          <SubmitButton onClick={() => navigate("/")} type="submit">Voltar</SubmitButton>
+          <SubmitButton type="submit" className="first-button">Criar conta</SubmitButton>
         </InputButtons>
       </Form>
     </Container>
   );
 };
 
-export default LoginPage;
+export default SignupPage;
