@@ -101,8 +101,8 @@ const SignupPage: React.FC = () => {
           </GoogleOAuthProvider>
         </GoogleProvider>
         <InputButtons>
-          <SubmitButton onClick={() => navigate("/")} type="submit">Voltar</SubmitButton>
-          <SubmitButton type="submit" className="first-button">Criar conta</SubmitButton>
+          <SubmitButton onClick={() => navigate("/")} type="submit" className="first-button">Voltar</SubmitButton>
+          <SubmitButton type="submit">Criar conta</SubmitButton>
         </InputButtons>
       </Form>
     </Container>
