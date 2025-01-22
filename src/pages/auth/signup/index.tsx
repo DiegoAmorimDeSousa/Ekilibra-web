@@ -97,6 +97,7 @@ const SignupPage: React.FC = () => {
               onError={() => {
                 console.log('Login Failed');
               }}
+              text='continue_with'
             />
           </GoogleOAuthProvider>
         </GoogleProvider>
