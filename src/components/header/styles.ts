@@ -2,11 +2,11 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   background: white;
-  width: 100vw;
   padding: 20px 25px;
   border-bottom: 1px solid #e0e0e0;
   display: flex;
   justify-content: space-between;
+  height: 40px;
 `;
 
 export const ContinaerLogo = styled.div`
