@@ -81,4 +81,5 @@ export const ProfileButton = styled.div`
   height: 40px;
   border-radius: 50px;
   cursor: pointer;
+  margin: 0 15px 0 0;
 `;
