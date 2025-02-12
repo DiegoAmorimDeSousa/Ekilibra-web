@@ -7,6 +7,7 @@ export const Container = styled.div`
   display: flex;
   justify-content: space-between;
   height: 40px;
+  width: 100%;
 `;
 
 export const ContinaerLogo = styled.div`

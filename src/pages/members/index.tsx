@@ -32,7 +32,7 @@ const MembersPage: React.FC = () => {
           <InfoMember>
             <ProfileButton/>
             <NameAndStatus>
-              <Name>Diego Sousa</Name>
+              <Name>Ciclano dos Santos</Name>
               <Status>Admin</Status>
             </NameAndStatus>
           </InfoMember>
@@ -44,7 +44,7 @@ const MembersPage: React.FC = () => {
           <InfoMember>
             <ProfileButton/>
             <NameAndStatus>
-              <Name>Beatriz Cesconetto</Name>
+              <Name>Fulano da Silva</Name>
               <Status>Membro</Status>
             </NameAndStatus>
           </InfoMember>
