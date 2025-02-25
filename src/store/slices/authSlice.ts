@@ -20,16 +20,35 @@ const initialState: AuthState = {
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
-  async ({ email, password }: { email: string; password: string }, thunkAPI) => {
+  async ({ email, password, googleToken }: { email?: string; password?: string, googleToken?: string }, thunkAPI) => {
     try {
       const response = await axios.post("http://localhost:5000/users/login", {
         email,
         password,
+        googleToken
       });
 
       return response.data;
     } catch (error: unknown) {
       return thunkAPI.rejectWithValue(error || "Erro ao fazer login");
+    }
+  }
+);
+
+export const signupUser = createAsyncThunk(
+  "auth/signupUser",
+  async ({ name, phone, email, password, googleToken }: { name?: string; phone?: string; email?: string; password?: string, googleToken?: string }, thunkAPI) => {
+    try {
+      const response = await axios.post("http://localhost:5000/users/register", {
+        name,
+        phone,
+        email,
+        password,
+        googleToken
+      });
+      return response.data; 
+    } catch (error: unknown) {
+      return thunkAPI.rejectWithValue(error || "Erro ao criar conta");
     }
   }
 );

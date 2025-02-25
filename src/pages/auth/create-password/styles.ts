@@ -15,6 +15,19 @@ export const Logo = styled.img`
   object-fit: contain;
 `;
 
+export const Form = styled.form`
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: white;
+  border-radius: 10px;
+  max-width: 300px;
+  width: 70%;
+  padding: 24px;  
+
+  .first-position {
+    justify-content: flex-end !important;
+  }
+`;
+
 export const PasswordWrapper = styled.div`
   position: relative;
   display: flex;
@@ -40,14 +53,6 @@ export const TogglePasswordButton = styled.button`
   }
 `;
 
-export const Form = styled.form`
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background: white;
-  border-radius: 10px;
-  max-width: 300px;
-  width: 70%;
-  padding: 24px;  
-`;
 
 export const Title = styled.h1`
   font-size: 1.5rem;
@@ -134,5 +139,23 @@ export const SubmitButton = styled.button`
 
   &:hover {
     background-color: #fad067;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .loading-icon {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
 `;

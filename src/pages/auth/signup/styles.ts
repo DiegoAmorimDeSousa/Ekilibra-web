@@ -7,12 +7,14 @@ export const Container = styled.div`
   flex-direction: column;
   height: 100vh;
   border-radius: 30px;
+  /* margin: 100px 0; */
 `;
 
 export const Logo = styled.img`
   width: 200px;
   margin-bottom: 15px;
   object-fit: contain;
+  margin-top: 100px;
 `;
 
 export const Form = styled.form`
@@ -43,6 +45,47 @@ export const InputGroup = styled.div`
   padding: 0 17px 0 0px;
   font-family: "Roboto", serif;
   letter-spacing: 1.5px;
+
+  .input {
+    background: white;
+    margin-top: 8px;
+    width: 100%;
+    padding: 8px;
+    outline: none !important;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    transition: border-color 0.3s;
+    font-family: "Roboto", serif;
+
+    &:focus {
+      border-color: #3b82f6;
+    }
+  }
+`;
+
+export const PasswordWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: white;
+  width: 106%;
+`;
+
+export const TogglePasswordButton = styled.button`
+  background: white;
+  border: none;
+  position: absolute;
+  right: 10px;
+  bottom: 7px;
+  cursor: pointer;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    background: white;
+  }
 `;
 
 export const InputButtons = styled.div`
@@ -105,9 +148,27 @@ export const SubmitButton = styled.button`
   border: none;
   cursor: pointer;
   transition: background-color 0.3s;
-  margin: 24px;
+  margin: 24px 0 0 0;
 
   &:hover {
     background-color: #fad067;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .loading-icon {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
 `;

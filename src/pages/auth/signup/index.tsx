@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Eye, EyeOff, Loader } from 'lucide-react'; 
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Container, ErrorMessage, Form, GoogleProvider, Input, InputButtons, InputGroup, Label, Logo, SubmitButton, Title } from './styles';
+import { Container, ErrorMessage, Form, GoogleProvider, Input, InputButtons, InputGroup, Label, Logo, PasswordWrapper, SubmitButton, Title, TogglePasswordButton } from './styles';
 import EkilibraLogo from '../../../assets/logo.png';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate } from "react-router-dom";
-import { signupSchema } from '../../../schemas/auth'
+import { signupSchema } from '../../../schemas/auth';
+import { useDispatch } from "react-redux";
+import { signupUser } from "../../../store/slices/authSlice";
+import { AppDispatch } from "../../../store";
+import InputMask from 'react-input-mask'; 
 
 type SignupFormInputs = z.infer<typeof signupSchema>;
 
@@ -20,10 +25,37 @@ const SignupPage: React.FC = () => {
     resolver: zodResolver(signupSchema),
   });
 
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<SignupFormInputs> = data => {
-    console.log(data);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); 
+
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
+  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword((prev) => !prev)
+
+  const onSubmit: SubmitHandler<SignupFormInputs> = async (data) => {
+    setIsLoading(true); 
+
+    try {
+      const mappedData = {
+        name: data.nome,
+        phone: data.telefone,
+        email: data.email,
+        password: data.password,
+      };
+
+      const response = await dispatch(signupUser(mappedData));
+
+      if (response.meta.requestStatus === "fulfilled" && response.payload?.message === "User created") {
+        navigate("/", { state: { message: "success" } });
+      }
+    } catch (err) {
+      console.log("Erro ao criar conta", err);
+    } finally {
+      setIsLoading(false); // Desativa o loading
+    }
   };
 
   return (
@@ -31,6 +63,7 @@ const SignupPage: React.FC = () => {
       <Logo src={EkilibraLogo} alt="logo ekilibra"/>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Title>Cadastro</Title>
+        
         <InputGroup>
           <Label htmlFor="nome">Nome</Label>
           <Input
@@ -42,17 +75,19 @@ const SignupPage: React.FC = () => {
           />
           {errors.nome && <ErrorMessage>{errors.nome.message}</ErrorMessage>}
         </InputGroup>
+
         <InputGroup>
           <Label htmlFor="telefone">Telefone</Label>
-          <Input
+          <InputMask
+            className='input'
             id="telefone"
+            mask="(99) 99999-9999" 
             placeholder="(00) 0 0000-0000"
-            type="text"
-            hasError={!!errors.telefone}
             {...register('telefone')}
           />
           {errors.telefone && <ErrorMessage>{errors.telefone.message}</ErrorMessage>}
         </InputGroup>
+
         <InputGroup>
           <Label htmlFor="email">E-mail</Label>
           <Input
@@ -64,35 +99,34 @@ const SignupPage: React.FC = () => {
           />
           {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
         </InputGroup>
+
         <InputGroup>
           <Label htmlFor="password">Senha</Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder="*********"
-            hasError={!!errors.password}
-            {...register('password')}
-          />
+          <PasswordWrapper>
+            <Input id="password" placeholder="*********" type={showPassword ? "text" : "password"} hasError={!!errors.password} {...register('password')} />
+            <TogglePasswordButton type="button" onClick={togglePasswordVisibility}>
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} fill='white' />}
+            </TogglePasswordButton>
+          </PasswordWrapper>
           {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
         </InputGroup>
+
         <InputGroup>
           <Label htmlFor="confirmPassword">Confirmar Senha</Label>
-          <Input
-            id="confirmPassword"
-            type="password"
-            placeholder="*********"
-            hasError={!!errors.confirmPassword}
-            {...register('confirmPassword')}
-          />
-          {errors.confirmPassword && (
-            <ErrorMessage>{(errors.confirmPassword as { message: string }).message}</ErrorMessage>
-          )}
+          <PasswordWrapper>
+            <Input id="confirmPassword" placeholder="*********" type={showConfirmPassword ? "text" : "password"} hasError={!!errors.confirmPassword} {...register('confirmPassword')} />
+            <TogglePasswordButton type="button" onClick={toggleConfirmPasswordVisibility}>
+              {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} fill='white' />}
+            </TogglePasswordButton>
+          </PasswordWrapper>
+          {errors.confirmPassword && <ErrorMessage>{(errors.confirmPassword as { message: string }).message}</ErrorMessage>}
         </InputGroup>
+
         <GoogleProvider>
           <GoogleOAuthProvider clientId="726269650501-m6onmkh77kl11ojt2q94519t1107s7ku.apps.googleusercontent.com">
             <GoogleLogin
-              onSuccess={credentialResponse => {
-                console.log(credentialResponse.credential);
+              onSuccess={async (credentialResponse) => {
+                navigate('/create-password', { state: { googleToken: credentialResponse.credential } });
               }}
               onError={() => {
                 console.log('Login Failed');
@@ -101,9 +135,12 @@ const SignupPage: React.FC = () => {
             />
           </GoogleOAuthProvider>
         </GoogleProvider>
+
         <InputButtons>
-          <SubmitButton onClick={() => navigate("/")} type="submit" className="first-button">Voltar</SubmitButton>
-          <SubmitButton type="submit">Criar conta</SubmitButton>
+          <SubmitButton onClick={() => navigate("/")} type="button" className="first-button">Voltar</SubmitButton>
+          <SubmitButton type="submit" disabled={isLoading}>
+            {isLoading ? <Loader size={20} className="loading-icon" /> : "Criar conta"}
+          </SubmitButton>
         </InputButtons>
       </Form>
     </Container>

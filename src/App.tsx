@@ -5,6 +5,7 @@ import SignupPage from './pages/auth/signup';
 import HomePage from './pages/home';
 import BillsPage from './pages/bills';
 import MembersPage from './pages/members';
+import CreatePasswordPage from './pages/auth/create-password';
 
 const App: React.FC = () => (
   <Router>
@@ -14,6 +15,7 @@ const App: React.FC = () => (
       <Route path="/home" element={<HomePage />} />
       <Route path="/bills" element={<BillsPage />} />
       <Route path="/members" element={<MembersPage />} />
+      <Route path="/create-password" element={<CreatePasswordPage />} />
     </Routes>
   </Router>
 );

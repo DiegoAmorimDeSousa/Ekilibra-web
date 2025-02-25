@@ -1,16 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Container, ErrorMessage, Form, GoogleProvider, Input, InputButtons, InputGroup, Label, Logo, SubmitButton, Title } from './styles'
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
+import { Container, ErrorMessage, Form, GoogleProvider, Input, InputButtons, InputGroup, Label, Logo, PasswordWrapper, SubmitButton, Title, TogglePasswordButton } from './styles'
 import EkilibraLogo from '../../../assets/logo.png';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate } from "react-router-dom";
 import { loginSchema } from '../../../schemas/auth';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { loginUser } from "../../../store/slices/authSlice";
-import { AppDispatch, RootState } from "../../../store";
+import { AppDispatch } from "../../../store";
 
 type LoginFormInputs = z.infer<typeof loginSchema>;
 
@@ -25,24 +28,35 @@ const LoginPage: React.FC = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const auth = useSelector((state: RootState) => state.auth);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if(auth && auth?.user){
-      navigate('/home')
-    }
-  }, [auth])
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
-  const onSubmit: SubmitHandler<LoginFormInputs> = async data => {
+  const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
+    if (loading) return;
+
+    setLoading(true);
+
     try {
-      dispatch(loginUser(data));
+      const response = await dispatch(loginUser(data));
+
+      if (response.payload?.user?.id) {
+        navigate('/home');
+      } else {
+        toast.error("Usuário não encontrado", { position: "top-right" }); 
+      }
     } catch (err) {
-      console.log("Erro ao fazer login", err);
+      toast.error("Erro ao fazer login. Tente novamente.");
+      console.error("Erro ao fazer login", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Container>
+      <ToastContainer /> 
       <Logo src={EkilibraLogo} alt="logo ekilibra"/>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Title>Login</Title>
@@ -59,30 +73,42 @@ const LoginPage: React.FC = () => {
         </InputGroup>
         <InputGroup>
           <Label htmlFor="password">Senha</Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder="*********"
-            hasError={!!errors.password}
-            {...register('password')}
-          />
+          <PasswordWrapper>
+            <Input id="password" placeholder="*********" type={showPassword ? "text" : "password"} hasError={!!errors.password} {...register('password')} />
+            <TogglePasswordButton type="button" onClick={togglePasswordVisibility}>
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} fill='white' />}
+            </TogglePasswordButton>
+          </PasswordWrapper>
           {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
         </InputGroup>
         <GoogleProvider>
           <GoogleOAuthProvider clientId="726269650501-m6onmkh77kl11ojt2q94519t1107s7ku.apps.googleusercontent.com">
             <GoogleLogin
-              onSuccess={credentialResponse => {
-                console.log(credentialResponse.credential);
+              onSuccess={async (credentialResponse) => {
+                const response = await dispatch(loginUser({
+                  googleToken: credentialResponse.credential,
+                }));
+
+                if (response.payload?.user?.id) {
+                  navigate('/home');
+                } else {
+                  toast.error("Usuário não encontrado", { position: "top-right" }); 
+                }
               }}
               onError={() => {
+                toast.error("Falha ao autenticar com Google.");
                 console.log('Login Failed');
               }}
             />
           </GoogleOAuthProvider>
         </GoogleProvider>
         <InputButtons>
-          <SubmitButton type="submit" onClick={() => navigate("/signup")} className="first-button">Criar conta</SubmitButton>
-          <SubmitButton type="submit">Entrar</SubmitButton>
+          <SubmitButton type="button" onClick={() => navigate("/signup")} className="first-button">
+            Criar conta
+          </SubmitButton>
+          <SubmitButton type="submit" disabled={loading}>
+            {loading ? "Entrando..." : "Entrar"}
+          </SubmitButton>
         </InputButtons>
       </Form>
     </Container>
