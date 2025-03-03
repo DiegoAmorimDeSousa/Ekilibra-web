@@ -13,6 +13,7 @@ export const Container = styled.div`
 export const ContinaerLogo = styled.div`
   background: white;
 `;
+
 export const ContinaerButtons = styled.div`
   background: white;
   display: flex;
@@ -72,15 +73,67 @@ export const Button = styled.div`
   }
 
   &:hover::after {
-    transform: scaleX(1); /* Expande a borda ao passar o mouse */
+    transform: scaleX(1);
   }
 `;
 
-export const ProfileButton = styled.div`
-  background: red;
-  width: 40px; 
+export const ProfileButton = styled.img`
+  width: 40px;
   height: 40px;
   border-radius: 50px;
   cursor: pointer;
   margin: 0 15px 0 0;
+  font-family: "Roboto Mono", serif;
+`;
+
+export const DropdownMenu = styled.div`
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 120px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  z-index: 10;
+  font-family: "Roboto Mono", serif;
+`;
+
+export const DropdownItem = styled.div`
+  padding: 10px 15px;
+  cursor: pointer;
+  color: #333;
+  font-size: 14px;
+  text-align: left;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #f2f2f2;
+  }
+`;
+
+export const ProfileMenu = styled.div`
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: white;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+`;
+
+export const MenuItem = styled.div`
+  padding: 10px;
+  cursor: pointer;
+  color: #333;
+  font-size: 14px;
+  text-align: center;
+  font-family: "Roboto Mono", serif;
+  
+  &:hover {
+    background: #f0f0f0;
+  }
 `;

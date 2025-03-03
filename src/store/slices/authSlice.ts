@@ -4,6 +4,7 @@ import axios from "axios";
 interface User {
   email: string;
   token: string;
+  picture?: string;
 }
 
 interface AuthState {
@@ -70,7 +71,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload?.user;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
