@@ -6,8 +6,8 @@ export const Container = styled.div`
   border-bottom: 1px solid #e0e0e0;
   display: flex;
   justify-content: space-between;
-  height: 40px;
-  width: 100%;
+  align-items: center;
+  height: fit-content;
 `;
 
 export const ContinaerLogo = styled.div`

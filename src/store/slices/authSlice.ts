@@ -5,6 +5,8 @@ interface User {
   email: string;
   token: string;
   picture?: string;
+  name: string;
+  password: string;
 }
 
 interface AuthState {
