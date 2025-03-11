@@ -134,3 +134,26 @@ export const CancelButton = styled.button`
     background: #dc2626;
   }
 `;
+
+export const Select = styled.select`
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  outline: none;
+  cursor: pointer;
+  
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+
+  option {
+    background: white;
+    color: #333;
+    font-size: 16px;
+  }
+`;

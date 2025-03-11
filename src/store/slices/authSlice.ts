@@ -2,13 +2,17 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 interface User {
-  email: string;
-  token: string;
+  id?: string;
+  name?: string;
+  phone?: string;
+  age?: string | number;  
+  dateOfBirth?: string;
   picture?: string;
-  name: string;
-  password: string;
+  role?: string;
+  email?: string;
+  token?: string;
+  password?: string;
 }
-
 interface AuthState {
   user: User | null;
   loading: boolean;
@@ -34,6 +38,30 @@ export const loginUser = createAsyncThunk(
       return response.data;
     } catch (error: unknown) {
       return thunkAPI.rejectWithValue(error || "Erro ao fazer login");
+    }
+  }
+);
+
+export const updateUser = createAsyncThunk(
+  "auth/updateUser",
+  async (user: User, thunkAPI) => {
+    try {
+      const response = await fetch(`http://localhost:5000/users/${user.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+
+      if (!response.ok) {
+        return thunkAPI.rejectWithValue("Erro ao atualizar perfil");
+      }
+
+      const updatedUser = await response.json();
+      return updatedUser;
+    } catch (error: unknown) {
+      return thunkAPI.rejectWithValue(error || "Erro ao atualizar o perfil");
     }
   }
 );
@@ -72,6 +100,10 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload?.user;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload?.user;
       })

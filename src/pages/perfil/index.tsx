@@ -3,6 +3,11 @@ import { useSelector } from "react-redux";
 import AvatarEditor from "react-avatar-edit";
 import { RootState } from "store";
 import Header from "../../components/header";
+import { toast, ToastContainer } from "react-toastify";  
+import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store";
+import { updateUser } from "../../store/slices/authSlice";
 
 import { 
   Container, 
@@ -17,17 +22,55 @@ import {
   ModalOverlay, 
   ModalContent, 
   SaveButton, 
-  CancelButton
+  CancelButton,
+  Select
 } from "./styles";
 
 const MembersPage: React.FC = () => {
   const loggedUser = useSelector((state: RootState) => state.auth.user);
   const [preview, setPreview] = useState<string | null>(loggedUser?.picture || "");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [permission, setPermission] = useState<string>(loggedUser?.role || "membro");
+  const [name, setName] = useState(loggedUser?.name || "");
+  const [phone, setPhone] = useState(loggedUser?.phone || "");
+  const [age, setAge] = useState(loggedUser?.age || "");
+  const [dateOfBirth, setDateOfBirth] = useState<string>(loggedUser?.dateOfBirth ? new Date(loggedUser.dateOfBirth).toISOString().split("T")[0] : "");
 
   const onClose = () => setPreview(null);
   const onCrop = (view: string) => setPreview(view);
-  // TODO Pegar os dados salvos e enviar para o banco e atualizar
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleSave = async () => {
+    const validDate = dateOfBirth ? new Date(dateOfBirth) : null;
+    const formattedDate = validDate ? validDate.toISOString() : "Data inválida";
+  
+    const updatedUser = {
+      name,
+      phone,
+      age,
+      dateOfBirth: formattedDate,
+      picture: preview || loggedUser?.picture,
+      role: permission,
+      email: loggedUser?.email,
+      token: loggedUser?.token,
+      password: loggedUser?.password,
+      id: loggedUser?.id
+    };
+  
+    try {
+      const response = await dispatch(updateUser(updatedUser));
+      if (response.payload) {
+        toast.success("Perfil atualizado com sucesso!", { position: "top-right" });
+      } else {
+        toast.error("Falha ao atualizar perfil.", { position: "top-right" });
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar o perfil:", error);
+      toast.error("Erro ao atualizar o perfil.", { position: "top-right" });
+    }
+  };
+
   return (
     <Container>
       <Header />
@@ -62,18 +105,50 @@ const MembersPage: React.FC = () => {
 
         <InputGroup>
           <Label htmlFor="name">Nome</Label>
-          <Input id="name" type="text" value={loggedUser?.name} />
+          <Input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} />
         </InputGroup>
 
-        {/* TODO A senha não pode ta criptografada */}
         <InputGroup>
-          <Label htmlFor="password">Senha</Label>
-          <Input id="password" type="password" placeholder="Digite sua nova senha" value={loggedUser?.password} />
+          <Label htmlFor="phone">Telefone</Label>
+          <Input id="phone" type="text" value={phone} onChange={(e) => setPhone(e.target.value)} />
         </InputGroup>
 
-        {/* TODO Criar um campo para mostrar a permissão do usuário */}
-        Permissão: Definir na criação da conta
+        <InputGroup>
+          <Label htmlFor="age">Idade</Label>
+          <Input id="age" type="text" value={age} onChange={(e) => setAge(e.target.value)} />
+        </InputGroup>
+        
+        <InputGroup>
+          <Label htmlFor="dateOfBirth">Data de Nascimento</Label>
+          <Input 
+            id="dateOfBirth" 
+            type="date" 
+            value={dateOfBirth 
+              ? new Date(dateOfBirth).toISOString().split("T")[0] 
+              : ""} 
+              onChange={(e) => setDateOfBirth(e.target.value)} 
+          />
+        </InputGroup>
+
+        <InputGroup>
+          <Label htmlFor="permission">Permissão</Label>
+          <Select 
+            id="permission" 
+            value={permission}
+            onChange={(e) => setPermission(e.target.value)}
+          >
+            <option value="user">Usuário</option>
+            <option value="admin">Administrador</option>
+            <option value="member">Membro</option>
+          </Select>
+        </InputGroup>
+
+        <ChangePictureButton onClick={handleSave}>
+          Salvar
+        </ChangePictureButton>
       </Content>
+
+      <ToastContainer />  
     </Container>
   );
 };
