@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { RiArrowRightSLine } from "react-icons/ri";
 import AddMemberModal from "./addNewMember";
+import { CgProfile } from "react-icons/cg";
 
-import { Container, Content, Title, GroupMember, InfoMember, SubTitle, NameAndStatus, Name, Status, Question, ProfilePicture } from './styles';
+import { Container, Content, Title, GroupMember, InfoMember, SubTitle, NameAndStatus, Name, Status, Question, ProfilePicture, ProfilePictureEmpty } from './styles';
 
 interface User {
   id?: string;
@@ -16,6 +17,7 @@ interface User {
   email?: string;
   token?: string;
   password?: string;
+  status?: string;
 }
 
 import Header from '../../components/header'
@@ -33,7 +35,6 @@ const MembersPage: React.FC = () => {
 
 
   useEffect(() => {
-    console.log('loggedUser', loggedUser)
     if(loggedUser){
       setMembers([
         {
@@ -72,10 +73,15 @@ const MembersPage: React.FC = () => {
           return (
             <GroupMember>
               <InfoMember>
-                <ProfilePicture src={member?.picture || ""} alt="Imagem de perfil" />
+                {member?.picture ? 
+                  <ProfilePicture src={member?.picture || ''} alt="Imagem de perfil" /> : 
+                  <ProfilePictureEmpty>
+                    <CgProfile size={30}/>
+                  </ProfilePictureEmpty>
+                }
                 <NameAndStatus>
                   <Name>{member?.name}</Name>
-                  <Status>{member?.role}</Status>
+                  <Status>{member?.role ? member?.role?.toUpperCase() : member?.status === 'pending' ? 'Pendente' : 'Aceito'}</Status>
                 </NameAndStatus>
               </InfoMember>
               <Question>

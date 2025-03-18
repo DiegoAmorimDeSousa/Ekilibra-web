@@ -42,6 +42,18 @@ export const ProfilePicture = styled.img`
   border: 3px solid #f4c752;
 `;
 
+export const ProfilePictureEmpty = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px;
+  border: 3px solid #f4c752;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 export const InfoMember = styled.div`
   background: white;
   display: flex;
