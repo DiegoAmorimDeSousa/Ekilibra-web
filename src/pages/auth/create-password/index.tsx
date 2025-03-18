@@ -27,7 +27,7 @@ const CreatePasswordPage: React.FC = () => {
   const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const googleToken = location.state?.googleToken;
-  
+
   const [loading, setLoading] = useState(false); 
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
@@ -39,6 +39,8 @@ const CreatePasswordPage: React.FC = () => {
       const response = await dispatch(signupUser({
         googleToken: googleToken,
         password: data.newPassword,
+        email: location?.search?.split('=')?.[1],
+        isAcceptInvate: location?.search?.split('=')?.[1] ? true : false,
       }));
 
       if (response.meta.requestStatus === "fulfilled" && response.payload?.message === "User created") {

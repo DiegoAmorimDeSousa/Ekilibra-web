@@ -69,14 +69,15 @@ export const updateUser = createAsyncThunk(
 
 export const signupUser = createAsyncThunk(
   "auth/signupUser",
-  async ({ name, phone, email, password, googleToken }: { name?: string; phone?: string; email?: string; password?: string, googleToken?: string }, thunkAPI) => {
+  async ({ name, phone, email, password, googleToken, isAcceptInvate }: { name?: string; phone?: string; email?: string; password?: string, googleToken?: string, isAcceptInvate?: boolean }, thunkAPI) => {
     try {
       const response = await axios.post("http://localhost:5000/users/register", {
         name,
         phone,
         email,
         password,
-        googleToken
+        googleToken,
+        isAcceptInvate,
       });
       return response.data; 
     } catch (error: unknown) {

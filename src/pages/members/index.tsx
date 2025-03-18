@@ -81,7 +81,7 @@ const MembersPage: React.FC = () => {
                 }
                 <NameAndStatus>
                   <Name>{member?.name}</Name>
-                  <Status>{member?.role ? member?.role?.toUpperCase() : member?.status === 'pending' ? 'Pendente' : 'Aceito'}</Status>
+                  <Status>{member?.role ? member?.role?.toUpperCase() : 'Membro'}</Status>
                 </NameAndStatus>
               </InfoMember>
               <Question>
