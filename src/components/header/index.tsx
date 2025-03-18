@@ -60,7 +60,7 @@ const Header: React.FC = () => {
       <ContinaerButtons>
         <Button>Home</Button>
         <Button>Contas</Button>
-        <Button>Membros</Button>
+        <Button onClick={() => navigate("/members")}>Membros</Button>
         <Question>
           <FaRegQuestionCircle size={20} />
         </Question>

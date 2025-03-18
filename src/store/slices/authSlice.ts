@@ -12,6 +12,7 @@ interface User {
   email?: string;
   token?: string;
   password?: string;
+  invitedMembers?: object[]
 }
 interface AuthState {
   user: User | null;
@@ -78,6 +79,27 @@ export const signupUser = createAsyncThunk(
         googleToken
       });
       return response.data; 
+    } catch (error: unknown) {
+      return thunkAPI.rejectWithValue(error || "Erro ao criar conta");
+    }
+  }
+);
+
+export const newMember = createAsyncThunk(
+  "auth/new-member",
+  async ({ name, phone, email, age, dateOfBirth, role, id, ownerName }: { name?: string; phone?: string; email?: string; age?: number, dateOfBirth?: string, role?: string, id?: string, ownerName?: string }, thunkAPI) => {
+    try {
+      await axios.post("http://localhost:5000/users/new-member", {
+        name,
+        phone,
+        email,
+        age,
+        dateOfBirth,
+        role,
+        id,
+        ownerName
+      });
+      return 200; 
     } catch (error: unknown) {
       return thunkAPI.rejectWithValue(error || "Erro ao criar conta");
     }

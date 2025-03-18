@@ -1,21 +1,61 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { RiArrowRightSLine } from "react-icons/ri";
+import AddMemberModal from "./addNewMember";
 
-import { Container, Content, Title, GroupMember, InfoMember, SubTitle, NameAndStatus, Name, Status, Question, ProfileButton } from './styles';
+import { Container, Content, Title, GroupMember, InfoMember, SubTitle, NameAndStatus, Name, Status, Question, ProfilePicture } from './styles';
+
+interface User {
+  id?: string;
+  name?: string;
+  phone?: string;
+  age?: string | number;  
+  dateOfBirth?: string;
+  picture?: string;
+  role?: string;
+  email?: string;
+  token?: string;
+  password?: string;
+}
 
 import Header from '../../components/header'
+import { RootState } from "store";
+import { useSelector } from "react-redux";
 
 const MembersPage: React.FC = () => {
+  const loggedUser = useSelector((state: RootState) => state.auth.user);
+  const [members, setMembers] = useState([{}]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+
+  useEffect(() => {
+    console.log('loggedUser', loggedUser)
+    if(loggedUser){
+      setMembers([
+        {
+          name: loggedUser?.name,
+          role: loggedUser?.role,
+          picture: loggedUser?.picture
+        },
+        ...loggedUser.invitedMembers || []
+      ]);
+    }
+  }, [loggedUser])
+
   return (
     <Container>
       <Header />
+      {isModalOpen && <AddMemberModal onClose={closeModal} />}
       <Content>
         <Title>Gerenciar membros</Title>
         <SubTitle>Adiconar membros</SubTitle>
         <GroupMember>
           <InfoMember>
-            <Question>
+            <Question onClick={openModal}>
               <IoAddCircleOutline size={20} />
             </Question>
             <NameAndStatus>
@@ -23,35 +63,27 @@ const MembersPage: React.FC = () => {
               <Status>Convite pendente</Status>
             </NameAndStatus>
           </InfoMember>
-          <Question>
+          <Question onClick={openModal}>
             <RiArrowRightSLine size={20} />
           </Question>
         </GroupMember>
         <SubTitle>Membros</SubTitle>
-        <GroupMember>
-          <InfoMember>
-            <ProfileButton/>
-            <NameAndStatus>
-              <Name>Ciclano dos Santos</Name>
-              <Status>Admin</Status>
-            </NameAndStatus>
-          </InfoMember>
-          <Question>
-            <RiArrowRightSLine size={20} />
-          </Question>
-        </GroupMember>
-        <GroupMember>
-          <InfoMember>
-            <ProfileButton/>
-            <NameAndStatus>
-              <Name>Fulano da Silva</Name>
-              <Status>Membro</Status>
-            </NameAndStatus>
-          </InfoMember>
-          <Question>
-            <RiArrowRightSLine size={20} />
-          </Question>
-        </GroupMember>
+        {members?.map((member: User)=> {
+          return (
+            <GroupMember>
+              <InfoMember>
+                <ProfilePicture src={member?.picture || ""} alt="Imagem de perfil" />
+                <NameAndStatus>
+                  <Name>{member?.name}</Name>
+                  <Status>{member?.role}</Status>
+                </NameAndStatus>
+              </InfoMember>
+              <Question>
+                <RiArrowRightSLine size={20} />
+              </Question>
+            </GroupMember>
+          )
+        })}
       </Content>
     </Container>
   )
